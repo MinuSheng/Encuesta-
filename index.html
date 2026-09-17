@@ -190,9 +190,9 @@ button{border:0;border-radius:12px;padding:13px 16px;font-weight:900;font-size:1
       <div class="hint">Cuéntanos cualquier detalle del proceso que debería conocer la aplicación.</div>
       <textarea id="q32" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
     </section>
-<p class="note">Tus respuestas se guardan automáticamente en este dispositivo mientras completas la encuesta. Al finalizar, toca <b>Enviar por WhatsApp</b>. Primero intentaremos adjuntar el TXT; si tu teléfono no admite compartir ese archivo, WhatsApp se abrirá automáticamente con las respuestas listas como mensaje. <b>Descargar TXT</b> queda disponible como respaldo.<br><span class="saved" id="saveState">Listo para responder</span></p>
+<p class="note">Tus respuestas se guardan automáticamente en este dispositivo mientras completas la encuesta. Al finalizar, toca <b>Compartir respuestas</b>. Se abrirá el menú nativo del teléfono; elige <b>WhatsApp</b>, selecciona el contacto y envía. <b>Descargar TXT</b> queda disponible como respaldo.<br><span class="saved" id="saveState">Listo para responder</span></p>
 </div>
-<div class="actions"><button class="secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button><button class="primary" onclick="compartirWhatsApp()">📲 Enviar por WhatsApp</button><button class="secondary" onclick="generarTXT()">Descargar TXT</button></div>
+<div class="actions"><button class="secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button><button class="primary" onclick="compartirWhatsApp()">📲 Compartir respuestas</button><button class="secondary" onclick="generarTXT()">Descargar TXT</button></div>
 <script>
 const N=32, ids=['nombre','turno','area','fecha',...Array.from({length:N},(_,i)=>'q'+(i+1))];
 const qs=['¿Cuándo se inicia una hoja nueva?', 'Cuando termina tu turno, ¿la misma hoja queda abierta para que el siguiente analista continúe exactamente donde la dejaste?', '¿En qué momento exacto se considera terminada una hoja y ya no se debe seguir escribiendo en ella?', 'Si todavía queda espacio en la hoja cuando cambia la fecha, ¿continúan en esa misma hoja o comienzan obligatoriamente una nueva?', '¿UHT y Derivados llevan hojas completamente independientes y pueden permanecer abiertas al mismo tiempo?', 'Cuando recibes el turno, ¿qué información te entrega el analista anterior además de la hoja?', 'El formato dice cada 30 min. ¿Cómo funciona realmente esa frecuencia?', 'Cuando llega el momento de pesar, ¿cómo decides cuántas muestras registrar?', 'En UHT, ¿qué representan exactamente B1, B2, B3, B4 y B5?', 'En Derivados, ¿cómo se determina cuántas filas de pesos necesita cada producto?', '¿Qué datos son obligatorios cada vez que comienza un producto?', 'Si cambia solamente el lote pero continúa el mismo producto, ¿qué hacen en la hoja?', 'Cuando cambia el producto o la presentación, ¿cómo se registra exactamente y dónde comienza el siguiente?', '¿Qué significa la línea diagonal que se dibuja frecuentemente entre grupos de registros?', '¿Cuándo escriben “FIN” y qué significa exactamente?', '¿Qué tipos de paro necesitan registrar normalmente?', 'Durante un paro, ¿se suspenden los controles de 30 minutos? ¿Cuándo corresponde el primer peso después de reiniciar?', 'Si olvidaste registrar un peso o escribiste uno incorrecto, ¿puedes agregarlo/corregirlo después?', '¿Un analista puede modificar registros hechos por el analista del turno anterior?', 'Cuando un peso sale fuera de especificación, ¿qué procedimiento de registro realizan?', '¿Te serviría que la aplicación detecte automáticamente un peso fuera de especificación?', '¿Las especificaciones impresas en la parte inferior de la hoja son suficientes para validar todos los productos?', '¿Quiénes deben firmar la hoja y en qué momento?', 'En una versión digital, ¿qué forma de firma sería aceptable?', '¿Cómo debería funcionar la entrega digital entre analistas sin perder quién hizo cada registro?', '¿Puede haber dos analistas escribiendo al mismo tiempo en la misma hoja?', 'Si temporalmente no hay internet, ¿necesitan poder seguir registrando y sincronizar después?', '¿Quién genera o entrega finalmente el Excel/registro terminado?', '¿El Excel debe poder descargarse mientras la hoja sigue abierta o solamente después de cerrarla?', '¿El Excel digital debe conservar exactamente la distribución del formato físico oficial y salir en una sola página al imprimir?', '¿La aplicación puede guardar internamente datos adicionales que no aparezcan en el formato impreso?', '¿Hay algo indispensable que normalmente escriben o hacen en estas hojas y que no aparezca en las preguntas anteriores?'];
@@ -230,34 +230,27 @@ function generarTXT(){
 async function compartirWhatsApp(){
  const d=construirTXT();
 
- // 1) Primero intentamos compartir el TXT como archivo.
- // En navegadores Android que no admiten archivos TXT por Web Share,
- // pasamos automáticamente al envío directo como texto por WhatsApp.
- try{
-   const archivo=new File([d.texto],d.nombre,{type:'text/plain;charset=utf-8'});
-   if(navigator.share && (!navigator.canShare || navigator.canShare({files:[archivo]}))){
+ // Compartir SOLO TEXTO mediante el menú nativo de Android.
+ // Evitamos adjuntar archivos y evitamos redirigir a enlaces web de WhatsApp.
+ if(navigator.share){
+   try{
      await navigator.share({
        title:'Encuesta SNDR Labs',
-       text:'Respuestas de la encuesta de Monitoreo de Peso · SNDR Labs',
-       files:[archivo]
+       text:d.texto
      });
      return;
+   }catch(e){
+     // Si el usuario simplemente cierra/cancela el menú, no hacemos nada.
+     if(e && e.name==='AbortError') return;
    }
- }catch(e){
-   // Si el usuario canceló el selector de compartir, no abrimos WhatsApp.
-   if(e && e.name==='AbortError') return;
  }
 
- // 2) Respaldo universal: abrir WhatsApp con las respuestas como mensaje.
- // Funciona aunque Brave/Android no permita compartir el archivo TXT.
+ // Respaldo si el navegador no ofrece Web Share.
  try{
-   const encabezado='*SNDR LABS*%0A*Encuesta · Monitoreo de Peso*%0A%0A';
-   const texto=encodeURIComponent(d.texto);
-   const url='https://wa.me/?text='+encabezado+texto;
-   const w=window.open(url,'_blank');
-   if(!w) window.location.href=url;
+   await navigator.clipboard.writeText(d.texto);
+   alert('Tu navegador no pudo abrir el menú de compartir. Las respuestas se copiaron al portapapeles para que puedas pegarlas en WhatsApp. También puedes usar “Descargar TXT”.');
  }catch(e){
-   alert('No se pudo abrir WhatsApp. Usa “Descargar TXT” para guardar las respuestas.');
+   alert('Tu navegador no permite compartir directamente. Usa “Descargar TXT” como respaldo.');
  }
 }
 load();
