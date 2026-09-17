@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Encuesta Analistas de Calidad · SNDR Labs</title>
+<style>
+:root{--bg:#07111f;--panel:#0d1b2d;--panel2:#10243a;--line:#203b59;--text:#eef7ff;--muted:#9fb4c9;--accent:#55d6ff;--ok:#65e6a5}
+*{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:radial-gradient(circle at 50% -10%,#173553 0,#07111f 38%,#050b13 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:760px;margin:auto;padding:18px 14px 100px} header{padding:26px 8px 18px;text-align:center}
+.brand{font-weight:900;letter-spacing:.18em;color:var(--accent);font-size:13px} h1{font-size:28px;line-height:1.08;margin:10px 0} .lead{color:var(--muted);line-height:1.5;margin:auto;max-width:620px}
+.meta,.card{background:linear-gradient(180deg,rgba(16,36,58,.96),rgba(10,25,42,.96));border:1px solid var(--line);border-radius:18px;box-shadow:0 14px 40px #0005}
+.meta{padding:16px;margin:12px 0 18px} label{display:block;font-size:12px;font-weight:800;color:#bdd1e3;margin:8px 0 6px;text-transform:uppercase;letter-spacing:.06em}
+input,textarea{width:100%;border:1px solid #294966;border-radius:12px;background:#071421;color:white;padding:13px;font:inherit;outline:none} textarea{resize:vertical;min-height:112px;line-height:1.45} input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px #55d6ff18}
+.progressbox{position:sticky;top:8px;z-index:5;background:#081523eF;border:1px solid var(--line);padding:10px 12px;border-radius:14px;margin-bottom:14px;backdrop-filter:blur(10px)}
+.ptext{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:7px} .bar{height:7px;background:#152a40;border-radius:20px;overflow:hidden} .fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--ok));transition:.2s}
+.card{padding:17px;margin:12px 0} .qtop{display:flex;gap:12px;align-items:flex-start} .num{display:grid;place-items:center;min-width:38px;height:38px;border-radius:11px;background:#55d6ff16;border:1px solid #55d6ff55;color:var(--accent);font-weight:900}
+.tag{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--accent);font-weight:900;margin:1px 0 4px} h2{font-size:17px;line-height:1.35;margin:0 0 11px} .hint{color:var(--muted);font-size:13px;line-height:1.45;margin:3px 0 12px;padding-left:50px}
+.actions{position:fixed;bottom:0;left:0;right:0;background:#050c14ee;border-top:1px solid var(--line);padding:10px max(12px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;justify-content:center;z-index:10;flex-wrap:wrap}
+button{border:0;border-radius:12px;padding:13px 16px;font-weight:900;font-size:14px;cursor:pointer} .primary{background:var(--accent);color:#03111b;flex:1 1 65%;max-width:520px} .secondary{background:#152a40;color:white}
+.note{font-size:12px;color:var(--muted);text-align:center;margin:18px 10px} .saved{color:var(--ok);font-weight:800}
+@media(min-width:650px){.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}}
+</style></head>
+<body><div class="wrap">
+<header><div class="brand">SNDR LABS</div><h1>Encuesta · Monitoreo de Peso</h1><p class="lead">Queremos digitalizar el proceso sin cambiar la forma real de trabajar ni el formato oficial. Responde según lo que haces actualmente en planta. Si UHT y Derivados funcionan diferente, indícalo en la respuesta.</p></header>
+<div class="meta"><div class="meta-grid">
+<div><label>Nombre del analista</label><input id="nombre" placeholder="Nombre y apellido"></div>
+<div><label>Turno</label><input id="turno" placeholder="A, B, C…"></div>
+<div><label>Área / proceso</label><input id="area" placeholder="UHT, Derivados o ambos"></div>
+<div><label>Fecha</label><input id="fecha" type="date"></div>
+</div></div>
+<div class="progressbox"><div class="ptext"><span>Progreso de respuestas</span><b id="pct">0%</b></div><div class="bar"><div class="fill" id="fill"></div></div></div>
+
+    <section class="card" data-num="1">
+      <div class="qtop"><span class="num">01</span><div><div class="tag">Inicio de la hoja</div><h2>¿Cuándo se inicia una hoja nueva?</h2></div></div>
+      <div class="hint">Ej.: al comenzar el día, al iniciar turno A, cuando se llena la anterior, por cambio de fecha, etc.</div>
+      <textarea id="q1" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="2">
+      <div class="qtop"><span class="num">02</span><div><div class="tag">Entrega entre turnos</div><h2>Cuando termina tu turno, ¿la misma hoja queda abierta para que el siguiente analista continúe exactamente donde la dejaste?</h2></div></div>
+      <div class="hint">Describe cómo ocurre normalmente la entrega A → B → C.</div>
+      <textarea id="q2" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="3">
+      <div class="qtop"><span class="num">03</span><div><div class="tag">Cierre de hoja</div><h2>¿En qué momento exacto se considera terminada una hoja y ya no se debe seguir escribiendo en ella?</h2></div></div>
+      <div class="hint">Esta respuesta definirá cuándo debe existir el botón “Cerrar hoja”.</div>
+      <textarea id="q3" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="4">
+      <div class="qtop"><span class="num">04</span><div><div class="tag">Cambio de fecha</div><h2>Si todavía queda espacio en la hoja cuando cambia la fecha, ¿continúan en esa misma hoja o comienzan obligatoriamente una nueva?</h2></div></div>
+      
+      <textarea id="q4" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="5">
+      <div class="qtop"><span class="num">05</span><div><div class="tag">UHT y Derivados</div><h2>¿UHT y Derivados llevan hojas completamente independientes y pueden permanecer abiertas al mismo tiempo?</h2></div></div>
+      
+      <textarea id="q5" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="6">
+      <div class="qtop"><span class="num">06</span><div><div class="tag">Información al recibir turno</div><h2>Cuando recibes el turno, ¿qué información te entrega el analista anterior además de la hoja?</h2></div></div>
+      <div class="hint">Producto, lote, máquina, último peso, próximo control, paro/desviación pendiente, etc.</div>
+      <textarea id="q6" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="7">
+      <div class="qtop"><span class="num">07</span><div><div class="tag">Frecuencia de control</div><h2>El formato dice cada 30 min. ¿Cómo funciona realmente esa frecuencia?</h2></div></div>
+      <div class="hint">¿Exactamente :00/:30, 30 minutos desde la medición anterior, existe tolerancia? ¿Qué hacen si se atrasan?</div>
+      <textarea id="q7" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="8">
+      <div class="qtop"><span class="num">08</span><div><div class="tag">Cantidad de muestras</div><h2>Cuando llega el momento de pesar, ¿cómo decides cuántas muestras registrar?</h2></div></div>
+      <div class="hint">¿Depende de máquina, producto, presentación, número de bocas u otra regla?</div>
+      <textarea id="q8" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="9">
+      <div class="qtop"><span class="num">09</span><div><div class="tag">B1–B5 en UHT</div><h2>En UHT, ¿qué representan exactamente B1, B2, B3, B4 y B5?</h2></div></div>
+      <div class="hint">¿Cuándo deben tener valor y cuándo se coloca “-” o se dejan vacías?</div>
+      <textarea id="q9" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="10">
+      <div class="qtop"><span class="num">10</span><div><div class="tag">Filas/pesos en Derivados</div><h2>En Derivados, ¿cómo se determina cuántas filas de pesos necesita cada producto?</h2></div></div>
+      
+      <textarea id="q10" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="11">
+      <div class="qtop"><span class="num">11</span><div><div class="tag">Datos al iniciar producto</div><h2>¿Qué datos son obligatorios cada vez que comienza un producto?</h2></div></div>
+      <div class="hint">Indica todos: producto/presentación, lote, vencimiento, fecha de producción, máquina, bocas, etc.</div>
+      <textarea id="q11" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="12">
+      <div class="qtop"><span class="num">12</span><div><div class="tag">Cambio de lote</div><h2>Si cambia solamente el lote pero continúa el mismo producto, ¿qué hacen en la hoja?</h2></div></div>
+      
+      <textarea id="q12" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="13">
+      <div class="qtop"><span class="num">13</span><div><div class="tag">Cambio de producto</div><h2>Cuando cambia el producto o la presentación, ¿cómo se registra exactamente y dónde comienza el siguiente?</h2></div></div>
+      
+      <textarea id="q13" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="14">
+      <div class="qtop"><span class="num">14</span><div><div class="tag">Línea diagonal</div><h2>¿Qué significa la línea diagonal que se dibuja frecuentemente entre grupos de registros?</h2></div></div>
+      <div class="hint">¿Puede significar varias cosas? Indícalas.</div>
+      <textarea id="q14" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="15">
+      <div class="qtop"><span class="num">15</span><div><div class="tag">FIN</div><h2>¿Cuándo escriben “FIN” y qué significa exactamente?</h2></div></div>
+      <div class="hint">¿Fin de producto, lote, producción, máquina, turno u otra cosa?</div>
+      <textarea id="q15" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="16">
+      <div class="qtop"><span class="num">16</span><div><div class="tag">Tipos de paro</div><h2>¿Qué tipos de paro necesitan registrar normalmente?</h2></div></div>
+      <div class="hint">Ej.: CIP, R/P. Indica los nombres/abreviaturas y si hace falta una opción “Otro”.</div>
+      <textarea id="q16" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="17">
+      <div class="qtop"><span class="num">17</span><div><div class="tag">Reinicio después de paro</div><h2>Durante un paro, ¿se suspenden los controles de 30 minutos? ¿Cuándo corresponde el primer peso después de reiniciar?</h2></div></div>
+      <div class="hint">Ej.: inmediatamente, próximo :00/:30, 30 minutos después del reinicio, etc.</div>
+      <textarea id="q17" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="18">
+      <div class="qtop"><span class="num">18</span><div><div class="tag">Registro atrasado/corrección</div><h2>Si olvidaste registrar un peso o escribiste uno incorrecto, ¿puedes agregarlo/corregirlo después?</h2></div></div>
+      <div class="hint">Explica cómo debe quedar la hora y si existe alguna restricción.</div>
+      <textarea id="q18" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="19">
+      <div class="qtop"><span class="num">19</span><div><div class="tag">Modificar turno anterior</div><h2>¿Un analista puede modificar registros hechos por el analista del turno anterior?</h2></div></div>
+      <div class="hint">Si sí, ¿durante cuánto tiempo o bajo qué condición?</div>
+      <textarea id="q19" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="20">
+      <div class="qtop"><span class="num">20</span><div><div class="tag">Fuera de especificación</div><h2>Cuando un peso sale fuera de especificación, ¿qué procedimiento de registro realizan?</h2></div></div>
+      <div class="hint">Explica Hora, Causa, Ajuste/Acción Correctiva, Técnico de línea y cualquier otro paso.</div>
+      <textarea id="q20" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="21">
+      <div class="qtop"><span class="num">21</span><div><div class="tag">Detección automática</div><h2>¿Te serviría que la aplicación detecte automáticamente un peso fuera de especificación?</h2></div></div>
+      <div class="hint">Si sí, explica de dónde salen los límites oficiales que deben utilizarse.</div>
+      <textarea id="q21" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="22">
+      <div class="qtop"><span class="num">22</span><div><div class="tag">Especificaciones</div><h2>¿Las especificaciones impresas en la parte inferior de la hoja son suficientes para validar todos los productos?</h2></div></div>
+      <div class="hint">Si faltan productos/límites, explica dónde se consultan.</div>
+      <textarea id="q22" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="23">
+      <div class="qtop"><span class="num">23</span><div><div class="tag">Firmas</div><h2>¿Quiénes deben firmar la hoja y en qué momento?</h2></div></div>
+      <div class="hint">Técnicos A/B/C, Analistas A/B/C, VoBo Jefe de Calidad, Jefe de Turno, etc.</div>
+      <textarea id="q23" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="24">
+      <div class="qtop"><span class="num">24</span><div><div class="tag">Firma digital</div><h2>En una versión digital, ¿qué forma de firma sería aceptable?</h2></div></div>
+      <div class="hint">Nombre automático del usuario, firma con el dedo, confirmación, imprimir y firmar físicamente, etc.</div>
+      <textarea id="q24" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="25">
+      <div class="qtop"><span class="num">25</span><div><div class="tag">Entregar / Recibir</div><h2>¿Cómo debería funcionar la entrega digital entre analistas sin perder quién hizo cada registro?</h2></div></div>
+      <div class="hint">¿A pulsa “Entregar turno” y B “Recibir turno”, o bastaría con que B abra la hoja? Describe lo más fiel al proceso real.</div>
+      <textarea id="q25" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="26">
+      <div class="qtop"><span class="num">26</span><div><div class="tag">Uso simultáneo</div><h2>¿Puede haber dos analistas escribiendo al mismo tiempo en la misma hoja?</h2></div></div>
+      <div class="hint">Ej.: A termina una corrección mientras B ya comenzó a registrar.</div>
+      <textarea id="q26" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="27">
+      <div class="qtop"><span class="num">27</span><div><div class="tag">Trabajo sin internet</div><h2>Si temporalmente no hay internet, ¿necesitan poder seguir registrando y sincronizar después?</h2></div></div>
+      
+      <textarea id="q27" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="28">
+      <div class="qtop"><span class="num">28</span><div><div class="tag">Quién genera el Excel</div><h2>¿Quién genera o entrega finalmente el Excel/registro terminado?</h2></div></div>
+      
+      <textarea id="q28" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="29">
+      <div class="qtop"><span class="num">29</span><div><div class="tag">Cuándo generar Excel</div><h2>¿El Excel debe poder descargarse mientras la hoja sigue abierta o solamente después de cerrarla?</h2></div></div>
+      
+      <textarea id="q29" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="30">
+      <div class="qtop"><span class="num">30</span><div><div class="tag">Formato oficial</div><h2>¿El Excel digital debe conservar exactamente la distribución del formato físico oficial y salir en una sola página al imprimir?</h2></div></div>
+      <div class="hint">Indica si existe algún elemento que sí esté permitido cambiar.</div>
+      <textarea id="q30" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="31">
+      <div class="qtop"><span class="num">31</span><div><div class="tag">Datos internos</div><h2>¿La aplicación puede guardar internamente datos adicionales que no aparezcan en el formato impreso?</h2></div></div>
+      <div class="hint">Ej.: usuario que creó cada registro, hora exacta, historial de cambios, etc.</div>
+      <textarea id="q31" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+    <section class="card" data-num="32">
+      <div class="qtop"><span class="num">32</span><div><div class="tag">Algo que falta</div><h2>¿Hay algo indispensable que normalmente escriben o hacen en estas hojas y que no aparezca en las preguntas anteriores?</h2></div></div>
+      <div class="hint">Cuéntanos cualquier detalle del proceso que debería conocer la aplicación.</div>
+      <textarea id="q32" placeholder="Escribe aquí tu respuesta…" rows="4"></textarea>
+    </section>
+<p class="note">Tus respuestas se guardan automáticamente en este dispositivo mientras completas la encuesta. Al finalizar, toca <b>Enviar por WhatsApp</b>. Se abrirá el menú de compartir del teléfono con el TXT listo para enviarse. <b>Descargar TXT</b> queda disponible como respaldo.<br><span class="saved" id="saveState">Listo para responder</span></p>
+</div>
+<div class="actions"><button class="secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button><button class="primary" onclick="compartirWhatsApp()">📲 Enviar por WhatsApp</button><button class="secondary" onclick="generarTXT()">Descargar TXT</button></div>
+<script>
+const N=32, ids=['nombre','turno','area','fecha',...Array.from({length:N},(_,i)=>'q'+(i+1))];
+const qs=['¿Cuándo se inicia una hoja nueva?', 'Cuando termina tu turno, ¿la misma hoja queda abierta para que el siguiente analista continúe exactamente donde la dejaste?', '¿En qué momento exacto se considera terminada una hoja y ya no se debe seguir escribiendo en ella?', 'Si todavía queda espacio en la hoja cuando cambia la fecha, ¿continúan en esa misma hoja o comienzan obligatoriamente una nueva?', '¿UHT y Derivados llevan hojas completamente independientes y pueden permanecer abiertas al mismo tiempo?', 'Cuando recibes el turno, ¿qué información te entrega el analista anterior además de la hoja?', 'El formato dice cada 30 min. ¿Cómo funciona realmente esa frecuencia?', 'Cuando llega el momento de pesar, ¿cómo decides cuántas muestras registrar?', 'En UHT, ¿qué representan exactamente B1, B2, B3, B4 y B5?', 'En Derivados, ¿cómo se determina cuántas filas de pesos necesita cada producto?', '¿Qué datos son obligatorios cada vez que comienza un producto?', 'Si cambia solamente el lote pero continúa el mismo producto, ¿qué hacen en la hoja?', 'Cuando cambia el producto o la presentación, ¿cómo se registra exactamente y dónde comienza el siguiente?', '¿Qué significa la línea diagonal que se dibuja frecuentemente entre grupos de registros?', '¿Cuándo escriben “FIN” y qué significa exactamente?', '¿Qué tipos de paro necesitan registrar normalmente?', 'Durante un paro, ¿se suspenden los controles de 30 minutos? ¿Cuándo corresponde el primer peso después de reiniciar?', 'Si olvidaste registrar un peso o escribiste uno incorrecto, ¿puedes agregarlo/corregirlo después?', '¿Un analista puede modificar registros hechos por el analista del turno anterior?', 'Cuando un peso sale fuera de especificación, ¿qué procedimiento de registro realizan?', '¿Te serviría que la aplicación detecte automáticamente un peso fuera de especificación?', '¿Las especificaciones impresas en la parte inferior de la hoja son suficientes para validar todos los productos?', '¿Quiénes deben firmar la hoja y en qué momento?', 'En una versión digital, ¿qué forma de firma sería aceptable?', '¿Cómo debería funcionar la entrega digital entre analistas sin perder quién hizo cada registro?', '¿Puede haber dos analistas escribiendo al mismo tiempo en la misma hoja?', 'Si temporalmente no hay internet, ¿necesitan poder seguir registrando y sincronizar después?', '¿Quién genera o entrega finalmente el Excel/registro terminado?', '¿El Excel debe poder descargarse mientras la hoja sigue abierta o solamente después de cerrarla?', '¿El Excel digital debe conservar exactamente la distribución del formato físico oficial y salir en una sola página al imprimir?', '¿La aplicación puede guardar internamente datos adicionales que no aparezcan en el formato impreso?', '¿Hay algo indispensable que normalmente escriben o hacen en estas hojas y que no aparezca en las preguntas anteriores?'];
+function save(){
+  const d={}; ids.forEach(id=>d[id]=document.getElementById(id).value);
+  localStorage.setItem('sndr_encuesta_analistas_v1',JSON.stringify(d));
+  document.getElementById('saveState').textContent='✓ Respuestas guardadas en este dispositivo';
+  updateProgress();
+}
+function load(){
+  try{const d=JSON.parse(localStorage.getItem('sndr_encuesta_analistas_v1')||'{}');ids.forEach(id=>{if(d[id])document.getElementById(id).value=d[id]})}catch(e){}
+  if(!document.getElementById('fecha').value) document.getElementById('fecha').value=new Date().toISOString().slice(0,10);
+  updateProgress();
+}
+function updateProgress(){
+ let done=0; for(let i=1;i<=N;i++) if(document.getElementById('q'+i).value.trim()) done++;
+ const p=Math.round(done/N*100); document.getElementById('pct').textContent=p+'%'; document.getElementById('fill').style.width=p+'%';
+}
+ids.forEach(id=>document.getElementById(id).addEventListener('input',save));
+function construirTXT(){
+ const nombre=document.getElementById('nombre').value.trim()||'No indicado';
+ const turno=document.getElementById('turno').value.trim()||'No indicado';
+ const area=document.getElementById('area').value.trim()||'No indicado';
+ const fecha=document.getElementById('fecha').value||'No indicada';
+ let t='SNDR LABS\nENCUESTA - DIGITALIZACIÓN DEL MONITOREO DE PESO\n'+'='.repeat(58)+'\n\n';
+ t+=`Analista: ${nombre}\nTurno: ${turno}\nÁrea / proceso: ${area}\nFecha: ${fecha}\n\n`;
+ for(let i=1;i<=N;i++){t+=`${String(i).padStart(2,'0')}. ${qs[i-1]}\nRESPUESTA: ${document.getElementById('q'+i).value.trim()||'[Sin respuesta]'}\n\n`;}
+ t+='='.repeat(58)+'\nGenerado mediante encuesta SNDR Labs\n';
+ return {texto:t,nombre:'respuestas_analista_'+nombre.replace(/[^a-z0-9áéíóúñ]+/gi,'_')+'.txt'};
+}
+function generarTXT(){
+ const d=construirTXT(), blob=new Blob([d.texto],{type:'text/plain;charset=utf-8'}), url=URL.createObjectURL(blob), a=document.createElement('a');
+ a.href=url;a.download=d.nombre;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+async function compartirWhatsApp(){
+ const d=construirTXT();
+ const archivo=new File([d.texto],d.nombre,{type:'text/plain;charset=utf-8'});
+ try{
+   if(navigator.share && (!navigator.canShare || navigator.canShare({files:[archivo]}))){
+     await navigator.share({title:'Encuesta SNDR Labs',text:'Respuestas de la encuesta de Monitoreo de Peso · SNDR Labs',files:[archivo]});
+   }else if(navigator.share){
+     await navigator.share({title:'Encuesta SNDR Labs',text:'Respuestas de la encuesta de Monitoreo de Peso · SNDR Labs\n\n'+d.texto});
+   }else{
+     alert('Este navegador no permite compartir directamente. Se descargará el TXT para que puedas enviarlo por WhatsApp.');
+     generarTXT();
+   }
+ }catch(e){
+   if(e && e.name==='AbortError') return;
+   alert('No se pudo abrir el menú de compartir. Se descargará el TXT como respaldo.');
+   generarTXT();
+ }
+}
+load();
+</script></body></html>
